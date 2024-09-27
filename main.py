@@ -33,6 +33,36 @@ class Game:
                     pygame.draw.line(self.screen, WHITE, ((SQUARE_SIZE // 4) + (col * SQUARE_SIZE), (SQUARE_SIZE // 4) + (row * SQUARE_SIZE)), ((3*SQUARE_SIZE // 4) + (col * SQUARE_SIZE), (3*SQUARE_SIZE // 4) + (row * SQUARE_SIZE)), LINE_WIDTH)
                     pygame.draw.line(self.screen, WHITE, ((3*SQUARE_SIZE // 4) + (col * SQUARE_SIZE), (SQUARE_SIZE // 4) + (row * SQUARE_SIZE)), ((SQUARE_SIZE // 4) + (col * SQUARE_SIZE), (3*SQUARE_SIZE // 4) + (row * SQUARE_SIZE)), LINE_WIDTH)
 
+    def mark_square(self, row, col, player):
+        self.board[row][col] = player
+
+    def is_square_available(self, row, col):
+        return self.board[row][col] == 0
+
+    def is_board_full(self):
+        return np.count_nonzero(self.board == 0) == 0
+
+    def check_win(self, player):
+        # Horizontal
+        for row in range(ROWS):
+            if np.all(self.board[row, :] == player):
+                return True
+        
+        # Vertical
+        for col in range(COLS):
+            if np.all(self.board[:, col] == player):
+                return True
+        
+        # Positive diagonal
+        if np.all(np.diag(self.board) == player):
+            return True
+        
+        # Negative diagonal
+        if np.all(np.diag(np.fliplr(self.board)) == player):
+            return True
+        
+        return False
+
     def run(self):
         while True:
             for event in pygame.event.get():
